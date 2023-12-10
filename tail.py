@@ -36,7 +36,7 @@ def main(filename: str, broker: str | None, port: int) -> None:
                     continue
                 print(packet)
                 if client:
-                    client.publish(TOPIC, packet.to_json())
+                    client.publish(f"{TOPIC}/{packet.type_str()}/{packet.from_addr()}", packet.to_json())
             else:
                 time.sleep(0.2)
     if client:

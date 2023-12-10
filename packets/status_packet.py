@@ -31,13 +31,13 @@ class StatusPacket(Packet):
     def known_fields() -> list[int]:
         return [3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 23, 24, 26]
 
-    def from_addr(self) -> str:
-        return self.addr3 if self.addr3 else self.addr2
+    def type_str(self) -> str:
+        return "status"
 
     def to_json(self) -> str:
         return json.dumps({
             "from": self.from_addr(),
-            "type": "status",
+            "type": self.type_str(),
             "temperature": self.temperature,
             "seconds_on": self.seconds_on})
 

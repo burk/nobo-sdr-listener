@@ -67,6 +67,9 @@ class Packet(ABC):
         addr = toaddr(self._bytes, 11, 12, 13, 14)
         return known_addresses[addr] if addr else None
 
+    def from_addr(self) -> str:
+        return self.addr3 if self.addr3 else self.addr2
+
     @abstractmethod
     def to_json(self) -> str:
         """Convert to JSON."""
@@ -74,6 +77,10 @@ class Packet(ABC):
     @staticmethod
     def known_fields() -> list[int]:
         return []
+
+    @abstractmethod
+    def type_str(self) -> str:
+        """Type of packet."""
 
     def unknown(self) -> list[int]:
         return [
@@ -98,6 +105,9 @@ class UnknownPacket(Packet):
 
     def to_json(self) -> str:
         return "{}"
+
+    def type_str(self) -> str:
+        return "unknown"
 
     def __str__(self) -> str:
         s = f"{self.receiver}: Unknown: "

@@ -3,6 +3,9 @@ import json
 from packets.packet import Packet
 
 class SettingPacket(Packet):
+    def type_str(self) -> str:
+        return "setting"
+
     @staticmethod
     def can_parse(b: bytearray) -> bool:
         addr1 = toaddr(b, 3, 4, 5, 6)
@@ -34,7 +37,7 @@ class SettingPacket(Packet):
 
     def to_json(self) -> str:
         return json.dumps(
-            {"type": "setting",
+            {"type": self.type_str(),
             "low_temp": self.low_temp,
             "hi_temp": self.hi_temp})
 
