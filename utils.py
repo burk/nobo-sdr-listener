@@ -1,6 +1,6 @@
 known_addresses = {
     "abd200a8": "Soverom",
-    "b7d200a8": "Kjøkken",
+    "b7d200a8": "Kjokken",
     "9bd200a8": "Stue",
     "e07e0066": "Hub",
 }
