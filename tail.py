@@ -1,5 +1,6 @@
 from __future__ import annotations
 import time
+import sys
 import argparse
 from packets.packet import Packet
 from paho.mqtt import client as mqtt_client
@@ -19,32 +20,35 @@ def connect_mqtt(broker: str, port: int) -> mqtt_client:
     client.connect(broker, port)
     return client
 
-def main(filename: str, broker: str | None, port: int) -> None:
+def main(filename: str | None, broker: str | None, port: int) -> None:
     client = None
     if broker is not None:
         client = connect_mqtt(broker, port)
         client.loop_start()
-    with open(filename, 'r') as f:
-        while True:
-            line = f.readline()
-            if line is not None and line != "":
-                try:
-                    tokens = line.split(",")
-                    data = tokens[2][5:]
-                    packet = Packet.from_hex(data)
-                except Exception:
-                    continue
-                print(packet)
-                if client:
-                    client.publish(f"{TOPIC}/{packet.type_str()}/{packet.from_addr()}", packet.to_json())
-            else:
-                time.sleep(0.5)
+    if filename:
+        f = open(filename, 'r')
+    else:
+        f = sys.stdin
+    while True:
+        line = f.readline()
+        if line is not None and line != "":
+            try:
+                tokens = line.split(",")
+                data = tokens[2][5:]
+                packet = Packet.from_hex(data)
+            except Exception:
+                continue
+            print(packet)
+            if client:
+                client.publish(f"{TOPIC}/{packet.type_str()}/{packet.from_addr()}", packet.to_json())
+        else:
+            time.sleep(0.5)
     if client:
         client.loop_stop()
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument("--filename", type=str, required=True)
+    parser.add_argument("--filename", type=str, required=False, default=None)
     parser.add_argument("--mqtt-host", type=str, required=False)
     parser.add_argument("--mqtt-port", type=int, default=1883)
     args = parser.parse_args()

@@ -2,6 +2,7 @@ known_addresses = {
     "abd200a8": "Soverom",
     "b7d200a8": "Kjokken",
     "9bd200a8": "Stue",
+    "492301d2": "Bad",
     "e07e0066": "Hub",
 }
 
@@ -29,5 +30,5 @@ def crc16(data: bytearray, offset: int, length: int) -> int:
 
 def toaddr(data: bytearray, *args: int) -> str | None:
     hexes = reversed([hex(data[i])[2:] for i in args])
-    data = "".join(["00" if a == "0" else a for a in hexes])
+    data = "".join([f"0{a}" if len(a) == 1 else a for a in hexes])
     return None if data == "00000000" else data
