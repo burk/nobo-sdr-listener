@@ -32,8 +32,16 @@ class SettingPacket(Packet):
         return (255 - self._bytes[22]) / 8
 
     @property
+    def hops(self) -> str:
+        match self._bytes[19]:
+            case 0: return "Direct"
+            case 1: return "Transit"
+            case 2: return "Final"
+            case _: return "<unknown>"
+
+    @property
     def mode(self) -> int:
-        return self._bytes[19]
+        return self._bytes[20]
 
     @property
     def mode_string(self) -> str:
@@ -58,4 +66,4 @@ class SettingPacket(Packet):
         return (f"{self.receiver:>8}: Setting: {self.addr1:>8}, "
                 f"{str(self.addr2):>8}, {str(self.addr3):>8}: "
                 f"{self.low_temp}°C, {self.hi_temp}°C, "
-                f"{self.mode_string} {self.unknown()}")
+                f"{self.mode_string}, {self.hops}, {self.unknown()}")
