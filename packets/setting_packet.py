@@ -31,6 +31,19 @@ class SettingPacket(Packet):
     def hi_temp(self) -> int:
         return (255 - self._bytes[22]) / 8
 
+    @property
+    def mode(self) -> int:
+        return self._bytes[19]
+
+    @property
+    def mode_string(self) -> str:
+        match self.mode:
+            case 0: return "Eco"
+            case 1: return "Comfort"
+            case 2: return "Away"
+            case 3: return "Off"
+            case _: return "<unknown>"
+
     @staticmethod
     def known_fields() -> list[int]:
         return [3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 21, 22]
@@ -42,4 +55,7 @@ class SettingPacket(Packet):
             "hi_temp": self.hi_temp})
 
     def __str__(self) -> str:
-        return f"{self.receiver:>8}: Setting: {self.addr1:>8}, {str(self.addr2):>8}, {str(self.addr3):>8}: {self.low_temp}°C, {self.hi_temp}°C, {self.unknown()}"
+        return (f"{self.receiver:>8}: Setting: {self.addr1:>8}, "
+                f"{str(self.addr2):>8}, {str(self.addr3):>8}: "
+                f"{self.low_temp}°C, {self.hi_temp}°C, "
+                f"{self.mode_string} {self.unknown()}")
